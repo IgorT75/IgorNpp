@@ -69,9 +69,9 @@ static const WinMenuKeyDefinition winKeyDefs[] =
 	// V_KEY,    COMMAND_ID,                                    Ctrl,  Alt,   Shift, cmdName
 	// -------------------------------------------------------------------------------------
 	//
-	{ VK_N,       IDM_FILE_NEW,                                 true,  false, false, nullptr },
+	{ VK_T,       IDM_FILE_NEW,                                 true,  false, false, nullptr },
 	{ VK_O,       IDM_FILE_OPEN,                                true,  false, false, nullptr },
-	{ VK_NULL,    IDM_FILE_OPEN_FOLDER,                         false, false, false, TEXT("Open containing folder in Explorer") },
+	{ VK_RETURN,  IDM_FILE_OPEN_FOLDER,                         false, true,  false, TEXT("Open containing folder in Explorer") },
 	{ VK_NULL,    IDM_FILE_OPEN_CMD,                            false, false, false, TEXT("Open containing folder in Command Prompt") },
 	{ VK_NULL,    IDM_FILE_OPEN_DEFAULT_VIEWER,                 false, false, false, nullptr },
 	{ VK_NULL,    IDM_FILE_OPENFOLDERASWORSPACE,                false, false, false, nullptr },
@@ -80,8 +80,8 @@ static const WinMenuKeyDefinition winKeyDefs[] =
 	{ VK_S,       IDM_FILE_SAVEAS,                              true,  true,  false, nullptr },
 	{ VK_NULL,    IDM_FILE_SAVECOPYAS,                          false, false, false, nullptr },
 	{ VK_S,       IDM_FILE_SAVEALL,                             true,  false, true,  nullptr },
-	{ VK_NULL,    IDM_FILE_RENAME,                              false, false, false, nullptr },
-	{ VK_W,       IDM_FILE_CLOSE,                               true,  false, false, nullptr },
+	{ VK_F6,      IDM_FILE_RENAME,                              false, false, true,  nullptr },
+	{ VK_F4,      IDM_FILE_CLOSE,                               true,  false, false, nullptr },
 	{ VK_W,       IDM_FILE_CLOSEALL,                            true,  false, true,  nullptr },
 	{ VK_NULL,    IDM_FILE_CLOSEALL_BUT_CURRENT,                false, false, false, nullptr },
 	{ VK_NULL,    IDM_FILE_CLOSEALL_TOLEFT,                     false, false, false, nullptr },
@@ -102,7 +102,7 @@ static const WinMenuKeyDefinition winKeyDefs[] =
 //	{ VK_NULL,    IDM_EDIT_PASTE,                               false, false, false, nullptr },
 //	{ VK_NULL,    IDM_EDIT_DELETE,                              false, false, false, nullptr },
 //	{ VK_NULL,    IDM_EDIT_SELECTALL,                           false, false, false, nullptr },
-	{ VK_NULL,    IDM_EDIT_BEGINENDSELECT,                      false, false, false, nullptr },
+	{ VK_INSERT,  IDM_EDIT_BEGINENDSELECT,                      true,  true,  false, nullptr },
 
 	{ VK_NULL,    IDM_EDIT_FULLPATHTOCLIP,                      false, false, false, nullptr },
 	{ VK_NULL,    IDM_EDIT_FILENAMETOCLIP,                      false, false, false, nullptr },
@@ -333,7 +333,7 @@ static const WinMenuKeyDefinition winKeyDefs[] =
 	{ VK_NULL,    IDM_VIEW_SYNSCROLLH,                          false, false, false, nullptr },
 	{ VK_R,       IDM_EDIT_RTL,                                 true,  true,  false, nullptr },
 	{ VK_L,       IDM_EDIT_LTR,                                 true,  true,  false, nullptr },
-	{ VK_NULL,    IDM_VIEW_MONITORING,                          false, false, false, nullptr },
+	{ VK_T,       IDM_VIEW_MONITORING,                          false, true,  false, nullptr },
 
 	{ VK_NULL,    IDM_FORMAT_ANSI,                              false, false, false, nullptr },
 	{ VK_NULL,    IDM_FORMAT_AS_UTF_8,                          false, false, false, nullptr },
@@ -556,7 +556,8 @@ static const ScintillaKeyDefinition scintKeyDefs[] =
 	{TEXT("SCI_LINEDUPLICATE"),           SCI_LINEDUPLICATE,           false, false, false, 0,           0},
 	{TEXT("SCI_CANCEL"),                  SCI_CANCEL,                  false, false, false, VK_ESCAPE,   0},
 	{TEXT("SCI_SWAPMAINANCHORCARET"),     SCI_SWAPMAINANCHORCARET,     false, false, false, 0,           0},
-	{TEXT("SCI_ROTATESELECTION"),         SCI_ROTATESELECTION,         false, false, false, 0,           0}
+	{TEXT("SCI_ROTATESELECTION"),         SCI_ROTATESELECTION,         false, false, false, 0,           0},
+	{TEXT("SCI_MULTIPLESELECTADDNEXT"),   SCI_MULTIPLESELECTADDNEXT,   true,  false, false, VK_W,        0}
 };
 
 
@@ -3642,6 +3643,17 @@ bool NppParameters::feedStylerArray(TiXmlNode *node)
 		eolColorkNode->ToElement()->SetAttribute(TEXT("fgColor"), TEXT("DADADA"));
 
 		_widgetStyleArray.addStyler(0, eolColorkNode);
+	}
+
+	pStyle = _widgetStyleArray.findByName(TEXT("Change History margin"));
+	if (!pStyle)
+	{
+		TiXmlNode* changeHistoryNode = globalStyleRoot->InsertEndChild(TiXmlElement(TEXT("WidgetStyle")));
+		changeHistoryNode->ToElement()->SetAttribute(TEXT("name"), TEXT("Change History margin"));
+		changeHistoryNode->ToElement()->SetAttribute(TEXT("styleID"), TEXT("0"));
+		changeHistoryNode->ToElement()->SetAttribute(TEXT("bgColor"), TEXT("E0E0E0"));
+
+		_widgetStyleArray.addStyler(0, changeHistoryNode);
 	}
 
 	return true;

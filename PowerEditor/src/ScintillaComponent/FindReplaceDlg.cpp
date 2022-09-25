@@ -281,8 +281,8 @@ void FindReplaceDlg::create(int dialogID, bool isRTL, bool msgDestParent)
 	getClientRect(rect);
 	_tab.init(_hInst, _hSelf, false, true);
 	NppDarkMode::subclassTabControl(_tab.getHSelf());
-	int tabDpiDynamicalHeight = dpiManager.scaleY(13);
-	_tab.setFont(TEXT("Tahoma"), tabDpiDynamicalHeight);
+	//int tabDpiDynamicalHeight = dpiManager.scaleY(13);
+	_tab.setFont(TEXT("Verdana"), 20);
 
 	const TCHAR *find = TEXT("Find");
 	const TCHAR *replace = TEXT("Replace");
@@ -1271,7 +1271,7 @@ intptr_t CALLBACK FindReplaceDlg::run_dlgProc(UINT message, WPARAM wParam, LPARA
 
 			if ((NppParameters::getInstance()).getNppGUI()._monospacedFontFindDlg)
 			{
-				_hMonospaceFont = createFont(TEXT("Courier New"), 8, false, _hSelf);
+				_hMonospaceFont = createFont(TEXT("Verdana"), 13, false, _hSelf);
 
 				SendMessage(hFindCombo, WM_SETFONT, (WPARAM)_hMonospaceFont, MAKELPARAM(true, 0));
 				SendMessage(hReplaceCombo, WM_SETFONT, (WPARAM)_hMonospaceFont, MAKELPARAM(true, 0));
@@ -1285,14 +1285,14 @@ intptr_t CALLBACK FindReplaceDlg::run_dlgProc(UINT message, WPARAM wParam, LPARA
 			// ComboBoxes are scaled using the font used in them, however this results in weird optics
 			// on scaling > 200% (192 DPI). Using this method we accomodate these scalings way better
 			// than the OS does with the current dpiAware.manifest...
-			for (HWND hComboBox : { hFindCombo, hReplaceCombo, hFiltersCombo, hDirCombo })
-			{
-				LOGFONT lf = {};
-				HFONT font = reinterpret_cast<HFONT>(SendMessage(hComboBox, WM_GETFONT, 0, 0));
-				::GetObject(font, sizeof(lf), &lf);
-				lf.lfHeight = (dpiManager.scaleY(16) - 5) * -1;
-				SendMessage(hComboBox, WM_SETFONT, (WPARAM)CreateFontIndirect(&lf), MAKELPARAM(true, 0));
-			}
+			////for (HWND hComboBox : { hFindCombo, hReplaceCombo, hFiltersCombo, hDirCombo })
+			////{
+			////	LOGFONT lf = {};
+			////	HFONT font = reinterpret_cast<HFONT>(SendMessage(hComboBox, WM_GETFONT, 0, 0));
+			////	::GetObject(font, sizeof(lf), &lf);
+			////	lf.lfHeight = (dpiManager.scaleY(16) - 5) * -1;
+			////	SendMessage(hComboBox, WM_SETFONT, (WPARAM)CreateFontIndirect(&lf), MAKELPARAM(true, 0));
+			////}
 
 			RECT arc{};
 			::GetWindowRect(::GetDlgItem(_hSelf, IDCANCEL), &arc);
@@ -4999,6 +4999,12 @@ void FindIncrementDlg::init(HINSTANCE hInst, HWND hPere, FindReplaceDlg *pFRDlg,
 	if (!pFRDlg)
 		throw std::runtime_error("FindIncrementDlg::init : Parameter pFRDlg is null");
 
+	/*HWND hFindCombo = ::GetDlgItem(_hSelf, IDFINDWHAT);
+	CFont m_Font;
+	m_Font.Detach();
+	m_Font.CreateFont(-13, 0, 0, 0, FW_NORMAL, FALSE, FALSE, 0, 0, 0, 0, 0, 0, "Tahoma");
+	hFindCombo->SetFont(&m_Font); */
+	
 	_pFRDlg = pFRDlg;
 	create(IDD_INCREMENT_FIND, isRTL);
 	_isRTL = isRTL;

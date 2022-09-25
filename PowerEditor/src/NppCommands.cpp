@@ -1350,11 +1350,15 @@ void Notepad_plus::command(int id)
 
 		case IDM_FOCUS_ON_FOUND_RESULTS:
 		{
-			if (GetFocus() == _findReplaceDlg.getHFindResults())
-				// focus already on found results, switch to current edit view
+			if(_findReplaceDlg.isFinderVisible())
+			{
+				_findReplaceDlg.hideFinder();
 				switchEditViewTo(currentView());
+			}
 			else
+			{
 				_findReplaceDlg.focusOnFinder();
+			}
 		}
 		break;
 
