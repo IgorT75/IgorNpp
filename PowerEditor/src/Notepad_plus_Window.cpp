@@ -17,6 +17,7 @@
 
 #include <time.h>
 #include <shlwapi.h>
+#include <stdio.h>
 #include "Notepad_plus_Window.h"
 
 const TCHAR Notepad_plus_Window::_className[32] = TEXT("Notepad++");
