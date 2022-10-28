@@ -2073,7 +2073,26 @@ LRESULT Notepad_plus::process(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 				generic_string nppIssueLog = nppParam.getUserPath();
 				pathAppend(nppIssueLog, issueFn);
 
-				writeLog(nppIssueLog.c_str(), "WM_QUERYENDSESSION =====================================");
+				string wmqesType = std::to_string(lParam);
+				if (0 == lParam)
+				{
+					wmqesType += " - ordinary system shutdown/restart";
+				}
+				else
+				{
+					// the lParam here is a bit mask, it can be one or more of the following values
+					if (lParam & ENDSESSION_CLOSEAPP)
+						wmqesType += " - ENDSESSION_CLOSEAPP";
+					if (lParam & ENDSESSION_CRITICAL)
+						wmqesType += " - ENDSESSION_CRITICAL";
+					if (lParam & ENDSESSION_LOGOFF)
+						wmqesType += " - ENDSESSION_LOGOFF";
+				}
+				string queryEndSession = "WM_QUERYENDSESSION (lParam: " + wmqesType + ") =====================================";
+				if (WM_QUERYENDSESSION == message)
+					writeLog(nppIssueLog.c_str(), queryEndSession.c_str());
+				else
+					writeLog(nppIssueLog.c_str(), "WM_CLOSE (isQueryEndSessionStarted == true)");
 			}
 
 			if (_pPublicInterface->isPrelaunch())
@@ -2120,6 +2139,7 @@ LRESULT Notepad_plus::process(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 
 				if (!saveProjectPanelsParams()) allClosed = false; //writeProjectPanelsSettings
 				saveFileBrowserParam();
+				saveColumnEditorParams();
 
 				if (!allClosed)
 				{
@@ -2226,7 +2246,29 @@ LRESULT Notepad_plus::process(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 				generic_string nppIssueLog = nppParam.getUserPath();
 				pathAppend(nppIssueLog, issueFn);
 
-				writeLog(nppIssueLog.c_str(), "WM_ENDSESSION");
+				string wmesType = std::to_string(lParam);
+				if (0 == lParam)
+				{
+					wmesType += " - ordinary system shutdown/restart";
+				}
+				else
+				{
+					// the lParam here is a bit mask, it can be one or more of the following values
+					if (lParam & ENDSESSION_CLOSEAPP)
+						wmesType += " - ENDSESSION_CLOSEAPP";
+					if (lParam & ENDSESSION_CRITICAL)
+						wmesType += " - ENDSESSION_CRITICAL";
+					if (lParam & ENDSESSION_LOGOFF)
+						wmesType += " - ENDSESSION_LOGOFF";
+				}
+				string endSession = "WM_ENDSESSION (wParam: ";
+				if (wParam)
+					endSession += "TRUE, lParam: ";
+				else
+					endSession += "FALSE, lParam: ";
+				endSession += wmesType + ")";
+
+				writeLog(nppIssueLog.c_str(), endSession.c_str());
 			}
 
 			if (wParam == TRUE)
@@ -2516,6 +2558,11 @@ LRESULT Notepad_plus::process(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 			return _pluginsManager.allocateMarker(static_cast<int32_t>(wParam), reinterpret_cast<int *>(lParam));
 		}
 
+		case NPPM_GETBOOKMARKID:
+		{
+			return MARK_BOOKMARK;
+		}
+
 		case NPPM_HIDETABBAR:
 		{
 			bool hide = (lParam != 0);
@@ -2670,6 +2717,22 @@ LRESULT Notepad_plus::process(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 
 			_mainEditView.showChangeHistoryMargin(svp._isChangeHistoryEnabled);
 			_subEditView.showChangeHistoryMargin(svp._isChangeHistoryEnabled);
+			return TRUE;
+		}
+
+		case NPPM_INTERNAL_CLEANBRACEMATCH:
+		{
+			_mainEditView.execute(SCI_SETHIGHLIGHTGUIDE, 0);
+			_subEditView.execute(SCI_SETHIGHLIGHTGUIDE, 0);
+			_mainEditView.execute(SCI_BRACEBADLIGHT, WPARAM(-1));
+			_subEditView.execute(SCI_BRACEBADLIGHT, WPARAM(-1));
+			return TRUE;
+		}
+
+		case NPPM_INTERNAL_CLEANSMARTHILITING:
+		{
+			_mainEditView.clearIndicator(SCE_UNIVERSAL_FOUND_STYLE_SMART);
+			_subEditView.clearIndicator(SCE_UNIVERSAL_FOUND_STYLE_SMART);
 			return TRUE;
 		}
 

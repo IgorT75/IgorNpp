@@ -2136,7 +2136,7 @@ void EditView::DrawForeground(Surface *surface, const EditModel &model, const Vi
 							hover =	rangeRun.ContainsCharacter(model.hoverIndicatorPos);
 						}
 						if (hover) {
-							if (indicator.sacHover.style == IndicatorStyle::TextFore) {
+							if (indicator.sacHover.style == IndicatorStyle::TextFore || (indicator.sacHover.style == IndicatorStyle::ExplorerLink)) {
 								textFore = indicator.sacHover.fore;
 							}
 						} else {
@@ -2768,6 +2768,14 @@ Sci::Position EditView::FormatRange(bool draw, CharacterRangeFull chrg, Rectangl
 		vsPrint.ms[lineNumberIndex].width = lineNumberWidth;
 		vsPrint.Refresh(*surfaceMeasure, model.pdoc->tabInChars);	// Recalculate fixedColumnWidth
 	}
+
+	// Turn off change history marker backgrounds
+	constexpr unsigned int changeMarkers =
+	1u << static_cast<unsigned int>(MarkerOutline::HistoryRevertedToOrigin) |
+	1u << static_cast<unsigned int>(MarkerOutline::HistorySaved) |
+	1u << static_cast<unsigned int>(MarkerOutline::HistoryModified) |
+	1u << static_cast<unsigned int>(MarkerOutline::HistoryRevertedToModified);
+	vsPrint.maskInLine &= ~changeMarkers;
 
 	const Sci::Line linePrintStart = model.pdoc->SciLineFromPosition(chrg.cpMin);
 	Sci::Line linePrintLast = linePrintStart + (rc.bottom - rc.top) / vsPrint.lineHeight - 1;

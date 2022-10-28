@@ -133,6 +133,8 @@ const int COPYDATA_FULL_CMDLINE = 3;
 #define ONEDRIVE_AVAILABLE 2
 #define GOOGLEDRIVE_AVAILABLE 4
 
+#define NPP_STYLING_FILESIZE_LIMIT_DEFAULT (200 * 1024 * 1024) // 200MB+ file won't be styled
+
 const TCHAR fontSizeStrs[][3] = {TEXT(""), TEXT("5"), TEXT("6"), TEXT("7"), TEXT("8"), TEXT("9"), TEXT("10"), TEXT("11"), TEXT("12"), TEXT("14"), TEXT("16"), TEXT("18"), TEXT("20"), TEXT("22"), TEXT("24"), TEXT("26"), TEXT("28")};
 
 const TCHAR localConfFile[] = TEXT("doLocalConf.xml");
@@ -720,6 +722,20 @@ struct DarkModeConf final
 	NppDarkMode::Colors _customColors = NppDarkMode::getDarkModeDefaultColors();
 };
 
+
+struct LargeFileRestriction final
+{
+	int64_t _largeFileSizeDefInByte = NPP_STYLING_FILESIZE_LIMIT_DEFAULT;
+	bool _isEnabled = true;
+
+	bool _deactivateWordWrap = true;
+
+	bool _allowBraceMatch = false;
+	bool _allowAutoCompletion = false;
+	bool _allowSmartHilite = false;
+	bool _allowClickableLink = false;
+};
+
 struct NppGUI final
 {
 	NppGUI()
@@ -890,7 +906,10 @@ struct NppGUI final
 
 	DarkModeConf _darkmode;
 	DarkModeConf _darkmodeplugins;
+
+	LargeFileRestriction _largeFileRestriction;
 };
+
 
 struct ScintillaViewParams
 {
@@ -1169,7 +1188,18 @@ struct FindHistory final
 	bool _regexBackward4PowerUser = false;
 };
 
+struct ColumnEditorParam final
+{
+	bool _mainChoice = true; //  true (1): text   false (0): number 
 
+	std::wstring _insertedTextContent;
+
+	int _initialNum = -1;
+	int _increaseNum = -1;
+	int _repeatNum = -1;
+	bool _isLeadingZeros = false;
+	int _formatChoice = 0; // 0:Dec 1:Hex 2:Oct 3:Bin
+};
 
 class LocalizationSwitcher final
 {
@@ -1410,6 +1440,7 @@ public:
 	bool writeHistory(const TCHAR *fullpath);
 
 	bool writeProjectPanelsSettings() const;
+	bool writeColumnEditorSettings() const;
 	bool writeFileBrowserSettings(const std::vector<generic_string> & rootPath, const generic_string & latestSelectedItemPath) const;
 
 	TiXmlNode* getChildElementByAttribut(TiXmlNode *pere, const TCHAR *childName, const TCHAR *attributName, const TCHAR *attributVal) const;
@@ -1677,13 +1708,11 @@ public:
 		_cmdSettingsDir = settingsDir;
 	};
 
-	void setTitleBarAdd(const generic_string& titleAdd)
-	{
+	void setTitleBarAdd(const generic_string& titleAdd) {
 		_titleBarAdditional = titleAdd;
 	}
 
-	const generic_string& getTitleBarAdd() const
-	{
+	const generic_string& getTitleBarAdd() const {
 		return _titleBarAdditional;
 	}
 
@@ -1695,6 +1724,8 @@ public:
 	void setUdlXmlDirtyFromXmlDoc(const TiXmlDocument* xmlDoc);
 	void removeIndexFromXmlUdls(size_t i);
 	bool isStylerDocLoaded() const { return _pXmlUserStylerDoc != nullptr; };
+
+	ColumnEditorParam _columnEditParam;
 
 private:
 	NppParameters();
@@ -1884,6 +1915,7 @@ private:
 	void feedFindHistoryParameters(TiXmlNode *node);
 	void feedProjectPanelsParameters(TiXmlNode *node);
 	void feedFileBrowserParameters(TiXmlNode *node);
+	void feedColumnEditorParameters(TiXmlNode *node);
 	bool feedStylerArray(TiXmlNode *node);
 	std::pair<unsigned char, unsigned char> feedUserLang(TiXmlNode *node);
 	void feedUserStyles(TiXmlNode *node);

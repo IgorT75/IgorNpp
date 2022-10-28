@@ -845,6 +845,12 @@ bool Notepad_plus::saveGUIParams()
 	return true;
 }
 
+bool Notepad_plus::saveColumnEditorParams()
+{
+	NppParameters& nppParams = NppParameters::getInstance();
+	return nppParams.writeColumnEditorSettings();
+}
+
 bool Notepad_plus::saveProjectPanelsParams()
 {
 	NppParameters& nppParams = NppParameters::getInstance();
@@ -2141,7 +2147,7 @@ int Notepad_plus::doDeleteOrNot(const TCHAR *fn)
 		_pPublicInterface->getHSelf(),
 		TEXT("The file \"$STR_REPLACE$\"\rwill be moved to your Recycle Bin and this document will be closed.\rContinue?"),
 		TEXT("Delete file"),
-		MB_YESNO | MB_ICONQUESTION | MB_APPLMODAL,
+		MB_OKCANCEL | MB_ICONQUESTION | MB_APPLMODAL,
 		0, // not used
 		fn);
 }
@@ -2584,7 +2590,7 @@ void Notepad_plus::findMatchingBracePos(intptr_t& braceAtCaret, intptr_t& braceO
 bool Notepad_plus::braceMatch()
 {
 	Buffer* currentBuf = _pEditView->getCurrentBuffer();
-	if (currentBuf->isLargeFile())
+	if (!currentBuf->allowBraceMach())
 		return false;
 
 	intptr_t braceAtCaret = -1;
@@ -3011,11 +3017,11 @@ bool isUrl(TCHAR * text, int textLen, int start, int* segmentLen)
 
 void Notepad_plus::addHotSpot(ScintillaEditView* view)
 {
-	Buffer* currentBuf = _pEditView->getCurrentBuffer();
-	if (currentBuf->isLargeFile())
-		return;
-
 	ScintillaEditView* pView = view ? view : _pEditView;
+
+	Buffer* currentBuf = pView->getCurrentBuffer();
+	if (!currentBuf->allowClickableLink())
+		return;
 
 	int urlAction = (NppParameters::getInstance()).getNppGUI()._styleURL;
 	LPARAM indicStyle = (urlAction == urlNoUnderLineFg) || (urlAction == urlNoUnderLineBg) ? INDIC_HIDDEN : INDIC_PLAIN;
@@ -3873,6 +3879,11 @@ void Notepad_plus::updateStatusBar()
 	_statusBar.setText(strLnColSel, STATUSBAR_CUR_POS);
 
 	_statusBar.setText(_pEditView->execute(SCI_GETOVERTYPE) ? TEXT("OVR") : TEXT("INS"), STATUSBAR_TYPING_MODE);
+	
+	if (_goToLineDlg.isCreated() && _goToLineDlg.isVisible())
+	{
+		_goToLineDlg.updateLinesNumbers();
+	}
 }
 
 void Notepad_plus::dropFiles(HDROP hdrop)
@@ -7322,6 +7333,7 @@ static const QuoteParams quotes[] =
 	{TEXT("Anonymous #195"), QuoteParams::rapid, false, SC_CP_UTF8, L_TEXT, TEXT("Why do programmers always mix up Halloween and Christmas?\nBecause Oct 31 == Dec 25\n") },
 	{TEXT("Anonymous #196"), QuoteParams::rapid, false, SC_CP_UTF8, L_TEXT, TEXT("What happened to the function that ran away?\nIt never returned.\n") },
 	{TEXT("Anonymous #197"), QuoteParams::rapid, false, SC_CP_UTF8, L_TEXT, TEXT("When I am tasked with sorting through a stack of résumés, I throw about half of them in the garbage.\nI do not want unlucky people working in our company.\n") },
+	{TEXT("Anonymous #198"), QuoteParams::rapid, false, SC_CP_UTF8, L_TEXT, TEXT("The reason why we write SQL commands all in CAPITAL letters is because it stands for Screaming Query Language.\n") },
 	{TEXT("xkcd"), QuoteParams::rapid, false, SC_CP_UTF8, L_TEXT, TEXT("Never have I felt so close to another soul\nAnd yet so helplessly alone\nAs when I Google an error\nAnd there's one result\nA thread by someone with the same problem\nAnd no answer\nLast posted to in 2003\n\n\"Who were you, DenverCoder9?\"\n\"What did you see?!\"\n\n(ref: https://xkcd.com/979/)") },
 	{TEXT("A developer"), QuoteParams::slow, false, SC_CP_UTF8, L_TEXT, TEXT("No hugs & kisses.\nOnly bugs & fixes.") },
 	{TEXT("Elon Musk"), QuoteParams::rapid, false, SC_CP_UTF8, L_TEXT, TEXT("Don't set your password as your child's name.\nName your child after your password.") },

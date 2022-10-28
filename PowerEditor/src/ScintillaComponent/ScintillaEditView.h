@@ -117,8 +117,8 @@ const int MARK_BOOKMARK = 20;
 const int MARK_HIDELINESBEGIN = 19;
 const int MARK_HIDELINESEND = 18;
 const int MARK_HIDELINESUNDERLINE = 17;
-// 20 - 16 reserved for Notepad++ internal used
-// 15 - 0  are free to use for plugins
+// 20 - 17 reserved for Notepad++ internal used
+// 16 - 0  are free to use for plugins
 
 
 int getNbDigits(int aNum, int base);
@@ -538,7 +538,7 @@ public:
 
 	void hideLines();
 
-	bool markerMarginClick(size_t lineNumber);	//true if it did something
+	bool markerMarginClick(intptr_t lineNumber);	//true if it did something
 	void notifyMarkers(Buffer * buf, bool isHide, size_t location, bool del);
 	void runMarkers(bool doHide, size_t searchStart, bool endOfDoc, bool doDelete);
 

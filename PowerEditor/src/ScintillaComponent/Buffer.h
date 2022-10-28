@@ -13,18 +13,17 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #pragma once
+
 #include <mutex>
-
 #include "Utf8_16.h"
-
 
 
 class Notepad_plus;
 class Buffer;
 typedef Buffer* BufferID;	//each buffer has unique ID by which it can be retrieved
 #define BUFFER_INVALID	reinterpret_cast<BufferID>(0)
-#define NPP_STYLING_FILESIZE_LIMIT (200 * 1024 * 1024) // 200MB+ file won't be styled
 
 typedef sptr_t Document;
 
@@ -128,8 +127,6 @@ private:
 	bool loadFileData(Document doc, int64_t fileSize, const TCHAR* filename, char* buffer, Utf8_16_Read* UnicodeConvertor, LoadedFileFormat& fileFormat);
 	LangType detectLanguageFromTextBegining(const unsigned char *data, size_t dataLen);
 
-
-private:
 	Notepad_plus* _pNotepadPlus = nullptr;
 	ScintillaEditView* _pscratchTilla = nullptr;
 	Document _scratchDocDefault = 0;
@@ -155,7 +152,7 @@ public:
 	// this method 1. copies the file name
 	//             2. determinates the language from the ext of file name
 	//             3. gets the last modified time
-	void setFileName(const TCHAR *fn, LangType defaultLang = L_TEXT);
+	void setFileName(const TCHAR *fn);
 
 	const TCHAR * getFullPathName() const { return _fullPathName.c_str(); }
 
@@ -317,6 +314,11 @@ public:
 	MapPosition getMapPosition() const { return _mapPosition; };
 
 	void langHasBeenSetFromMenu() { _hasLangBeenSetFromMenu = true; };
+
+	bool allowBraceMach() const;
+	bool allowAutoCompletion() const;
+	bool allowSmartHilite() const;
+	bool allowClickableLink() const;
 
 private:
 	int indexOfReference(const ScintillaEditView * identifier) const;

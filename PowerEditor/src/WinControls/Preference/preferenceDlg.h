@@ -252,6 +252,22 @@ private :
 	intptr_t CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 };
 
+class PerformanceSubDlg : public StaticDialog
+{
+friend class PreferenceDlg;
+public :
+	PerformanceSubDlg() = default;
+	~PerformanceSubDlg() {
+		if (_largeFileRestrictionTip)
+			::DestroyWindow(_largeFileRestrictionTip);
+	};
+
+private :
+	intptr_t CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
+
+	HWND _largeFileRestrictionTip = nullptr;
+};
+
 class PreferenceDlg : public StaticDialog
 {
 friend class NativeLangSpeaker;
@@ -306,6 +322,7 @@ private :
 	AutoCompletionSubDlg _autoCompletionSubDlg;
 	MultiInstanceSubDlg _multiInstanceSubDlg;
 	DelimiterSubDlg _delimiterSubDlg;
+	PerformanceSubDlg _performanceSubDlg;
 	CloudAndLinkSubDlg _cloudAndLinkSubDlg;
 	SearchEngineSubDlg _searchEngineSubDlg;
 	SearchingSubDlg _searchingSubDlg;

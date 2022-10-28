@@ -1011,6 +1011,7 @@
                     <Item id="6353" name="僅符合整個單字"/>
                     <Item id="6333" name="智慧醒目提示"/>
                     <Item id="6326" name="啟動智慧醒目提示"/>
+                    <Item id="6354" name="匹配"/>
                     <Item id="6332" name="區分大小寫"/>
                     <Item id="6338" name="僅符合整個單字"/>
                     <Item id="6339" name="使用尋找與取代對話方塊的設定"/>
@@ -1060,12 +1061,14 @@
                 </Print>
 
                 <Searching title="尋找">
-                    <Item id="6901" name="不用選取詞填充尋找與取代對話方塊中的尋找內容"/>
                     <Item id="6902" name="在尋找與取代對話方塊中使用等寬字型（需要重新啟動 Notepad++）"/>
                     <Item id="6903" name="搜尋結果輸出到結果視窗後，尋找與取代對話方塊繼續保持打開狀態"/>
                     <Item id="6904" name="確認「在所有開啟的文件中取代」"/>
                     <Item id="6905" name="替換：不要移動到下一個匹配項"/>
                     <Item id="6906" name="搜尋結果視窗：每個找到的行只顯示一個條目"/>
+                    <Item id="6907" name="當尋找對話方塊被觸發引出時"/>
+                    <Item id="6908" name="用選取詞填充尋找與取代對話方塊中的尋找內容"/>
+                    <Item id="6909" name="在沒有任何選取時，選取游標下的字串"/>
                 </Searching>
 
                 <RecentFilesHistory title="最近使用的檔案">
@@ -1126,8 +1129,6 @@
                     <Item id="6171" name="插入日期時間自訂"/>
                     <Item id="6175" name="顛倒日期時間內定順序（簡短與完整格式）"/>
                     <Item id="6172" name="自訂格式："/>
-					
-					
                 </MultiInstance>
 
                 <Delimiter title="分隔字元">
@@ -1139,6 +1140,18 @@
                     <Item id="6162" name="使用預設的單字字元集（建議）"/>
                     <Item id="6163" name="添加字元（不了解此選項的話不建議選取）"/>
                 </Delimiter>
+				
+                <Performance title="性能">
+                    <Item id="7141" name="大型檔案限制"/>
+                    <Item id="7143" name="啟動大型檔案限制（沒有語法醒目提示）"/>
+                    <Item id="7144" name="定義大型檔案文件長度大小："/>
+                    <Item id="7146" name="MB   (1 - 4096)"/>
+                    <Item id="7147" name="允許顏色顯示對應括號"/>
+                    <Item id="7148" name="允許自動完成功能"/>
+                    <Item id="7149" name="允許智慧醒目提示"/>
+                    <Item id="7150" name="停用自動換行"/>
+                    <Item id="7151" name="允許可點擊連結"/>
+                </Performance>
 
                 <Cloud title="雲端與連結">
                     <Item id="6262" name="雲端設定"/>
@@ -1534,6 +1547,12 @@
             <contextMenu-styleOneToken value="僅樣式化選擇的字串" />
             <contextMenu-clearStyle value="清除樣式" />
             <contextMenu-PluginCommands value="外掛模組" />
+            <largeFileRestriction-tip value="某些功能會降低開啟大型文件的速度，這些功能在開啟大型文件時自動停用。你可以在此處重新開啟或關閉這些功能。
+
+注意：
+1. 修改這些選項需要重新開啟已開啟的大型文件以達到預期的效果。
+
+2. 如果「停用自動換行」被啟動，在開啟一個大型文件時，「自動換行」將對所有文件停用。 你可以通過選單「檢視-&gt;自動換行」重新啟動這個功能。" />
         </MiscStrings>
     </Native-Langue>
 </NotepadPlus>
